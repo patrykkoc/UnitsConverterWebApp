@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using UnitsConverterWebApp.Data;
+using UnitsConverterWebApp.Models;
 
 namespace UnitsConverterWebApp.Controllers
 {
@@ -14,16 +16,29 @@ namespace UnitsConverterWebApp.Controllers
         }
 
         // GET: Converter
-        public async Task<IActionResult> Index()
+       
+
+        public async Task<IActionResult> Index(int? categoryId)
         {
-            // Pobierz wszystkie jednostki z kategoriami, żeby wyświetlić dropdowny
-            var units = await _context.Units.Include(u => u.Category).ToListAsync();
+            var categories = await _context.Categories.ToListAsync();
+            ViewBag.Categories = new SelectList(categories, "Id", "Name");
+            ViewBag.SelectedCategory = categoryId;
+
+            IQueryable<Unit> unitsQuery = _context.Units.Include(u => u.Category);
+
+            if (categoryId.HasValue)
+            {
+                unitsQuery = unitsQuery.Where(u => u.CategoryId == categoryId.Value);
+            }
+
+            var units = await unitsQuery.ToListAsync();
+
             return View(units);
         }
 
         // POST: Converter/Convert
         [HttpPost]
-        public IActionResult Convert(int fromUnitId, int toUnitId, double value)
+        public IActionResult Convert(int fromUnitId, int toUnitId, double value, int? categoryId)
         {
             var fromUnit = _context.Units.Find(fromUnitId);
             var toUnit = _context.Units.Find(toUnitId);
@@ -42,9 +57,17 @@ namespace UnitsConverterWebApp.Controllers
             ViewBag.ToUnit = toUnit.Name;
             ViewBag.Value = value;
 
-            // Do dropdownów ponownie przesyłamy listę jednostek
-            var units = _context.Units.Include(u => u.Category).ToList();
-            ViewBag.Units = units;
+            var categories = _context.Categories.ToList();
+            ViewBag.Categories = new SelectList(categories, "Id", "Name", categoryId);
+            ViewBag.SelectedCategory = categoryId;
+
+            IQueryable<Unit> unitsQuery = _context.Units.Include(u => u.Category);
+            if (categoryId.HasValue)
+            {
+                unitsQuery = unitsQuery.Where(u => u.CategoryId == categoryId.Value);
+            }
+
+            var units = unitsQuery.ToList();
 
             return View("Index",units);
         }
