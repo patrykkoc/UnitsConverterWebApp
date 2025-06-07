@@ -1,10 +1,25 @@
+﻿using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using System.Globalization;
+using UnitsConverterWebApp.Data;
+using UnitsConverterWebApp.Models;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<UnitsConverterWebAppContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("UnitsConverterWebAppContext") ?? throw new InvalidOperationException("Connection string 'UnitsConverterWebAppContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+ 
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    SeedData.Initialize(services);
+}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
