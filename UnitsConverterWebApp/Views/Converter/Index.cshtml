@@ -1,0 +1,45 @@
+﻿@model List<UnitsConverterWebApp.Models.Unit>
+
+@{
+    ViewData["Title"] = "Unit Converter";
+}
+
+<h1>Unit Converter</h1>
+
+<form asp-action="Convert" method="post" class="mb-3">
+    <div class="form-group">
+        <label for="fromUnitId">From Unit</label>
+        <select id="fromUnitId" name="fromUnitId" class="form-control" required>
+            <option value="">-- select unit --</option>
+            @foreach (var unit in Model)
+            {
+                <option value="@unit.Id">@unit.Name (@unit.Category.Name)</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="toUnitId">To Unit</label>
+        <select id="toUnitId" name="toUnitId" class="form-control" required>
+            <option value="">-- select unit --</option>
+            @foreach (var unit in Model)
+            {
+                <option value="@unit.Id">@unit.Name (@unit.Category.Name)</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="value">Value to Convert</label>
+        <input type="number" step="any" id="value" name="value" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Convert</button>
+</form>
+
+@if (ViewBag.Result != null)
+{
+    <div class="alert alert-success">
+        <strong>@ViewBag.Value</strong> @ViewBag.FromUnit = <strong>@ViewBag.Result</strong> @ViewBag.ToUnit
+    </div>
+}
