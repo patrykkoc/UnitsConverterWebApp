@@ -10,30 +10,30 @@ using UnitsConverterWebApp.Models;
 
 namespace UnitsConverterWebApp.Controllers
 {
-    public class UnitsController : Controller
+    public class CategoriesController : Controller
     {
         private readonly UnitsConverterWebAppContext _context;
 
-        public UnitsController(UnitsConverterWebAppContext context)
+        public CategoriesController(UnitsConverterWebAppContext context)
         {
             _context = context;
         }
 
-        // GET: Units
-        public async Task<IActionResult> Index(string searchString, int pageNumber = 1, int pageSize = 5)
+        // GET: Categories
+        public async Task<IActionResult> Index(string? searchString, int pageNumber = 1, int pageSize = 10)
         {
-            var query = _context.Units.Include(u => u.Category).AsQueryable();
+            var query = _context.Categories.AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                query = query.Where(u => u.Name.Contains(searchString));
+                query = query.Where(c => c.Name.Contains(searchString));
             }
 
-            var totalUnits = await query.CountAsync();
-            var totalPages = (int)Math.Ceiling(totalUnits / (double)pageSize);
+            int totalCount = await query.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-            var units = await query
-                .OrderBy(u => u.Name)
+            var categories = await query
+                .OrderBy(c => c.Name)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -41,14 +41,12 @@ namespace UnitsConverterWebApp.Controllers
             ViewData["PageNumber"] = pageNumber;
             ViewData["PageSize"] = pageSize;
             ViewData["TotalPages"] = totalPages;
-            ViewData["CurrentFilter"] = searchString; 
+            ViewData["SearchString"] = searchString;
 
-            return View(units);
+            return View(categories);
         }
 
-
-
-        // GET: Units/Details/5
+        // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -56,45 +54,42 @@ namespace UnitsConverterWebApp.Controllers
                 return NotFound();
             }
 
-            var unit = await _context.Units
+            var category = await _context.Categories
+                .Include(c => c.Units)  
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (unit == null)
+
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(unit);
+            return View(category);  
         }
 
-        // GET: Units/Create
+
+        // GET: Categories/Create
         public IActionResult Create()
         {
-            var categories = _context.Categories.ToList();
-            ViewBag.CategoryList = new SelectList(categories, "Id", "Name");
-
             return View();
         }
 
-        // POST: Units/Create
+        // POST: Categories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Symbol,CategoryId,MultiplierToBase,OffsetToBase,IsBaseUnit")] Unit unit)
+        public async Task<IActionResult> Create([Bind("Id,Name")] Category category)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(unit);
+                _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            var categories = _context.Categories.ToList();
-            ViewBag.CategoryList = new SelectList(categories, "Id", "Name", unit.CategoryId);
-
-            return View(unit);
+            return View(category);
         }
 
-        // GET: Units/Edit/5
+        // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -102,25 +97,22 @@ namespace UnitsConverterWebApp.Controllers
                 return NotFound();
             }
 
-            var unit = await _context.Units.FindAsync(id);
-            if (unit == null)
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
             {
                 return NotFound();
             }
-            var categories = _context.Categories.ToList();
-            ViewBag.CategoryList = new SelectList(categories, "Id", "Name");
-
-            return View(unit);
+            return View(category);
         }
 
-        // POST: Units/Edit/5
+        // POST: Categories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Symbol,CategoryId,MultiplierToBase,OffsetToBase,IsBaseUnit")] Unit unit)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Category category)
         {
-            if (id != unit.Id)
+            if (id != category.Id)
             {
                 return NotFound();
             }
@@ -129,12 +121,12 @@ namespace UnitsConverterWebApp.Controllers
             {
                 try
                 {
-                    _context.Update(unit);
+                    _context.Update(category);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UnitExists(unit.Id))
+                    if (!CategoryExists(category.Id))
                     {
                         return NotFound();
                     }
@@ -145,10 +137,10 @@ namespace UnitsConverterWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(unit);
+            return View(category);
         }
 
-        // GET: Units/Delete/5
+        // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -156,34 +148,34 @@ namespace UnitsConverterWebApp.Controllers
                 return NotFound();
             }
 
-            var unit = await _context.Units
+            var category = await _context.Categories
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (unit == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(unit);
+            return View(category);
         }
 
-        // POST: Units/Delete/5
+        // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var unit = await _context.Units.FindAsync(id);
-            if (unit != null)
+            var category = await _context.Categories.FindAsync(id);
+            if (category != null)
             {
-                _context.Units.Remove(unit);
+                _context.Categories.Remove(category);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UnitExists(int id)
+        private bool CategoryExists(int id)
         {
-            return _context.Units.Any(e => e.Id == id);
+            return _context.Categories.Any(e => e.Id == id);
         }
     }
 }

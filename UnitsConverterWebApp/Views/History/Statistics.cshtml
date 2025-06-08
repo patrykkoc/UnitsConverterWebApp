@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Statistics";
+    var categories = ViewBag.CategoryUnitCounts;
+}
+<h2>Statistics</h2>
+
+<p><strong>Total conversions:</strong> @ViewBag.TotalConversions</p>
+<p><strong>Most used unit:</strong> @ViewBag.MostUsedUnitName (@ViewBag.MostUsedCount times)</p>
+
+
+@if (categories != null  )
+{
+    <h3>Units per Category</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Unit Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in categories)
+            {
+                <tr>
+                    <td>@c.CategoryName</td>
+                    <td>@c.UnitCount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p><em>No category statistics available.</em></p>
+}

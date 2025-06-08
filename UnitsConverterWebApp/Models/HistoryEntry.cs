@@ -6,11 +6,11 @@ namespace UnitsConverterWebApp.Models
     {
         public int Id { get; set; }
 
-        public int FromUnitId { get; set; }
-        public Unit FromUnit { get; set; }
+        public int? FromUnitId { get; set; }
+        public Unit? FromUnit { get; set; }
 
-        public int ToUnitId { get; set; }
-        public Unit ToUnit { get; set; }
+        public int? ToUnitId { get; set; }
+        public Unit? ToUnit { get; set; }
 
         public double InputValue { get; set; }
         public double OutputValue { get; set; }

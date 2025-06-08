@@ -1,0 +1,66 @@
+﻿@model List<UnitsConverterWebApp.Models.HistoryEntry>
+
+@{
+    int pageNumber = ViewData["PageNumber"] != null ? (int)ViewData["PageNumber"] : 1;
+    int totalPages = ViewData["TotalPages"] != null ? (int)ViewData["TotalPages"] : 1;
+    int? selectedCategoryId = ViewData["SelectedCategoryId"] as int?;
+}
+
+<h2>Converse History</h2>
+
+<form method="get" asp-action="Index" class="form-inline mb-3">
+    <label for="categorySelect" class="mr-2">Filter by Category:</label>
+    <select id="categorySelect" name="categoryId" class="form-control mr-2" onchange="this.form.submit()">
+        <option value="">All Categories</option>
+        @foreach (var cat in ViewBag.Categories as SelectList)
+        {
+            <!option value="@cat.Value" @(selectedCategoryId == int.Parse(cat.Value) ? "selected" : "")>@cat.Text</!option>
+        }
+    </select>
+    <noscript><input type="submit" value="Filter" class="btn btn-primary" /></noscript>
+</form>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Z jednostki</th>
+            <th>Do jednostki</th>
+            <th>Wartość wejściowa</th>
+            <th>Wynik</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Time.ToLocalTime()</td>
+                <td>@item.FromUnit.Name (@item.FromUnit.Category.Name)</td>
+                <td>@item.ToUnit.Name (@item.ToUnit.Category.Name)</td>
+                <td>@item.InputValue</td>
+                <td>@item.OutputValue</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav>
+    <ul class="pagination">
+        <li class="page-item @(pageNumber == 1 ? "disabled" : "")">
+            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(pageNumber - 1)" asp-route-categoryId="@(selectedCategoryId)">Previous</a>
+        </li>
+
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <li class="page-item @(pageNumber == i ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-categoryId="@(selectedCategoryId)">@i</a>
+            </li>
+        }
+
+        <li class="page-item @(pageNumber == totalPages ? "disabled" : "")">
+            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(pageNumber + 1)" asp-route-categoryId="@(selectedCategoryId)">Next</a>
+        </li>
+    </ul>
+</nav>
+
+<a asp-action="Statistics">Show Stats</a>

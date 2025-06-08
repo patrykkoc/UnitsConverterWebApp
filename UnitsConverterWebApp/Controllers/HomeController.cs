@@ -15,6 +15,7 @@ namespace UnitsConverterWebApp.Controllers
 
         public IActionResult Index()
         {
+            // return RedirectToAction("Converter", "Home"); // or other controller if needed
             return View();
         }
 

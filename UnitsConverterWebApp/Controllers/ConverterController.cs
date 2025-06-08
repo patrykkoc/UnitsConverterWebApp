@@ -52,6 +52,20 @@ namespace UnitsConverterWebApp.Controllers
             double valueInBase = fromUnit.ToBase(value);
             double convertedValue = toUnit.FromBase(valueInBase);
 
+            _context.Histories.Add(new HistoryEntry
+            {
+                FromUnitId = fromUnitId,
+                ToUnitId = toUnitId,
+                InputValue = value,
+                OutputValue = convertedValue,
+                Time = DateTime.UtcNow
+            });
+
+            _context.SaveChanges();
+
+
+
+
             ViewBag.Result = convertedValue;
             ViewBag.FromUnit = fromUnit.Name;
             ViewBag.ToUnit = toUnit.Name;

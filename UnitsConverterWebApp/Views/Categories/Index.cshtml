@@ -1,0 +1,63 @@
+﻿@model IEnumerable<UnitsConverterWebApp.Models.Category>
+
+@{
+    ViewData["Title"] = "Categories";
+
+    int pageNumber = ViewData["PageNumber"] != null ? (int)ViewData["PageNumber"] : 1;
+    int totalPages = ViewData["TotalPages"] != null ? (int)ViewData["TotalPages"] : 1;
+    string searchString = ViewData["SearchString"] as string ?? "";
+}
+
+<h1>Categories</h1>
+
+<form method="get" asp-action="Index" class="form-inline mb-3">
+    <input type="text" name="searchString" value="@searchString" class="form-control mr-2" placeholder="Search categories..." />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.First().Name)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">@item.Name</a>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav>
+    <ul class="pagination">
+        <li class="page-item @(pageNumber == 1 ? "disabled" : "")">
+            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(pageNumber - 1)" asp-route-searchString="@searchString">Previous</a>
+        </li>
+
+        @for (int i = 1; i <= totalPages; i++)
+        {
+                <li class="page-item @(pageNumber == i ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-searchString="@searchString">@i</a>
+                </li>
+        }
+
+        <li class="page-item @(pageNumber == totalPages ? "disabled" : "")">
+            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(pageNumber + 1)" asp-route-searchString="@searchString">Next</a>
+        </li>
+    </ul>
+</nav>

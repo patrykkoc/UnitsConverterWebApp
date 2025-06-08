@@ -17,9 +17,9 @@ namespace UnitsConverterWebApp.Models
                     return; // DB has been seeded
                 }
 
-                // Seed categories
+               // Seed categories
                 var distanceCategory = new Category { Name = "Distance" };
-                var temperatureCategory = new Category {  Name = "Temperature" };
+                var temperatureCategory = new Category { Name = "Temperature" };
 
                 context.Categories.AddRange(distanceCategory, temperatureCategory);
                 context.SaveChanges();
@@ -27,7 +27,7 @@ namespace UnitsConverterWebApp.Models
                 context.Units.AddRange(
                     new Unit
                     {
-                        
+
                         Name = "Meter",
                         Symbol = "m",
                         MultiplierToBase = 1,
@@ -37,7 +37,7 @@ namespace UnitsConverterWebApp.Models
                     },
                     new Unit
                     {
-                         
+
                         Name = "Centimeter",
                         Symbol = "cm",
                         MultiplierToBase = 0.01,
@@ -47,7 +47,7 @@ namespace UnitsConverterWebApp.Models
                     },
                     new Unit
                     {
-                        
+
                         Name = "Celsius",
                         Symbol = "°C",
                         MultiplierToBase = 1,
@@ -57,7 +57,7 @@ namespace UnitsConverterWebApp.Models
                     },
                     new Unit
                     {
-                        
+
                         Name = "Fahrenheit",
                         Symbol = "°F",
                         MultiplierToBase = 5.0 / 9.0,

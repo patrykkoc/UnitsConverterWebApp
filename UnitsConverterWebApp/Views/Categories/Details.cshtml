@@ -1,0 +1,47 @@
+﻿@model UnitsConverterWebApp.Models.Category
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<h1>Details</h1>
+<h1>@Model.Name</h1>
+
+ 
+@if (Model.Units != null && Model.Units.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Symbol</th>
+                <th>Multiplier</th>
+                <th>Is Base Unit</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var unit in Model.Units)
+            {
+                <tr>
+                    <td>@unit.Name</td>
+                    <td>@unit.Symbol</td>
+                    <td>@unit.MultiplierToBase</td>
+                    <td>@(unit.IsBaseUnit ? "Yes" : "No")</td>
+                    <td>
+                        <a asp-controller="Units" asp-action="Details" asp-route-id="@unit.Id">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No units in this category.</p>
+}
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edytuj</a>
+    <a asp-action="Index" class="btn btn-secondary">Powrót</a>
+</div>
