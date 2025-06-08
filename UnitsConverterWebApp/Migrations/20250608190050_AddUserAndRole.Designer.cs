@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UnitsConverterWebApp.Data;
 
@@ -11,9 +12,11 @@ using UnitsConverterWebApp.Data;
 namespace UnitsConverterWebApp.Migrations
 {
     [DbContext(typeof(UnitsConverterWebAppContext))]
-    partial class UnitsConverterWebAppContextModelSnapshot : ModelSnapshot
+    [Migration("20250608190050_AddUserAndRole")]
+    partial class AddUserAndRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,16 +65,11 @@ namespace UnitsConverterWebApp.Migrations
                     b.Property<int?>("ToUnitId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FromUnitId");
 
                     b.HasIndex("ToUnitId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Histories");
                 });
@@ -166,17 +164,9 @@ namespace UnitsConverterWebApp.Migrations
                         .HasForeignKey("ToUnitId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("UnitsConverterWebApp.Models.User", "User")
-                        .WithMany("HistoryEntries")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("FromUnit");
 
                     b.Navigation("ToUnit");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("UnitsConverterWebApp.Models.Unit", b =>
@@ -209,11 +199,6 @@ namespace UnitsConverterWebApp.Migrations
             modelBuilder.Entity("UnitsConverterWebApp.Models.Role", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("UnitsConverterWebApp.Models.User", b =>
-                {
-                    b.Navigation("HistoryEntries");
                 });
 #pragma warning restore 612, 618
         }

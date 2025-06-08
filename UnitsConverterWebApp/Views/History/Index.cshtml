@@ -28,6 +28,10 @@
             <th>Do jednostki</th>
             <th>Wartość wejściowa</th>
             <th>Wynik</th>
+            @if (Context.Session.GetString("Role") == "Admin")
+            {
+                <th>Użytkownik</th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -39,10 +43,15 @@
                 <td>@item.ToUnit.Name (@item.ToUnit.Category.Name)</td>
                 <td>@item.InputValue</td>
                 <td>@item.OutputValue</td>
+                @if (Context.Session.GetString("Role") == "Admin")
+                {
+                    <td>@(item.User != null ? item.User.Username : "Unknown")</td>
+                }
             </tr>
         }
     </tbody>
 </table>
+
 
 <nav>
     <ul class="pagination">
@@ -62,5 +71,7 @@
         </li>
     </ul>
 </nav>
-
+ @if (Context.Session.GetString("Role") == "Admin")
+                {
 <a asp-action="Statistics">Show Stats</a>
+                }

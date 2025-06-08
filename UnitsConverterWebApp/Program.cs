@@ -8,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<UnitsConverterWebAppContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("UnitsConverterWebAppContext") ?? throw new InvalidOperationException("Connection string 'UnitsConverterWebAppContext' not found.")));
 
+//for accounts
+builder.Services.AddSession();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -30,6 +33,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+//setup account 
+
+app.UseSession();
+
+
 
 app.UseRouting();
 

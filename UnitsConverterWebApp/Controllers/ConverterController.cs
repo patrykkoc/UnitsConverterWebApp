@@ -44,13 +44,17 @@ namespace UnitsConverterWebApp.Controllers
             var toUnit = _context.Units.Find(toUnitId);
 
             if (fromUnit == null || toUnit == null)
-            {
                 return BadRequest("Nieprawidłowe jednostki");
-            }
 
-            // Konwersja wartości do bazy, potem na docelową jednostkę
             double valueInBase = fromUnit.ToBase(value);
             double convertedValue = toUnit.FromBase(valueInBase);
+
+            // Pobranie ID użytkownika z sesji
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+
+            if (user == null)
+                return Unauthorized(); // lub inna obsługa błędu
 
             _context.Histories.Add(new HistoryEntry
             {
@@ -58,13 +62,11 @@ namespace UnitsConverterWebApp.Controllers
                 ToUnitId = toUnitId,
                 InputValue = value,
                 OutputValue = convertedValue,
-                Time = DateTime.UtcNow
+                Time = DateTime.UtcNow,
+                UserId = user.Id  
             });
 
             _context.SaveChanges();
-
-
-
 
             ViewBag.Result = convertedValue;
             ViewBag.FromUnit = fromUnit.Name;
@@ -77,13 +79,12 @@ namespace UnitsConverterWebApp.Controllers
 
             IQueryable<Unit> unitsQuery = _context.Units.Include(u => u.Category);
             if (categoryId.HasValue)
-            {
                 unitsQuery = unitsQuery.Where(u => u.CategoryId == categoryId.Value);
-            }
 
             var units = unitsQuery.ToList();
 
-            return View("Index",units);
+            return View("Index", units);
         }
+
     }
 }

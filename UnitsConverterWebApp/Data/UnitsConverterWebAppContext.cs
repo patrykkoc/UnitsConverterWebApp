@@ -14,6 +14,9 @@ namespace UnitsConverterWebApp.Data
         public DbSet<Category> Categories { get; set; } = default!;
         public DbSet<Unit> Units { get; set; } = default!;
         public DbSet<HistoryEntry> Histories { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -37,7 +40,13 @@ namespace UnitsConverterWebApp.Data
                 .HasOne(h => h.ToUnit)
                 .WithMany()
                 .HasForeignKey(h => h.ToUnitId)
-                .OnDelete(DeleteBehavior.Restrict);  
+                .OnDelete(DeleteBehavior.Restrict);
+           
+            modelBuilder.Entity<HistoryEntry>()
+                .HasOne(h => h.User)
+                .WithMany(u => u.HistoryEntries)
+                .HasForeignKey(h => h.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
 

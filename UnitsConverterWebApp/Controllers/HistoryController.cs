@@ -16,17 +16,41 @@ namespace UnitsConverterWebApp.Controllers
 
         public IActionResult Index(int? categoryId, int pageNumber = 1, int pageSize = 10)
         {
+            string? username = HttpContext.Session.GetString("Username");
+            string? role = HttpContext.Session.GetString("Role");
+
+            if (string.IsNullOrEmpty(username))
+            {
+                // Brak zalogowanego użytkownika - przekieruj na login lub pokaż pustą listę
+                return RedirectToAction("Login", "Account");
+            }
+
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user == null)
+            {
+                // Nie znaleziono użytkownika w bazie - możesz obsłużyć to odpowiednio
+                return RedirectToAction("Login", "Account");
+            }
+
             var query = _context.Histories
                 .Include(h => h.FromUnit).ThenInclude(u => u.Category)
                 .Include(h => h.ToUnit).ThenInclude(u => u.Category)
+                .Include(h => h.User)   
                 .OrderByDescending(h => h.Time)
                 .AsQueryable();
 
+
+            if (role != "Admin")
+            {
+                query = query.Where(h => h.UserId == user.Id);
+            }
+
             if (categoryId.HasValue)
             {
-                // Filtrowanie po kategorii FromUnit (można rozszerzyć o ToUnit jeśli chcesz)
                 query = query.Where(h => h.FromUnit.CategoryId == categoryId.Value);
             }
+
+            query = query.OrderByDescending(h => h.Time);
 
             var totalCount = query.Count();
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
@@ -41,11 +65,11 @@ namespace UnitsConverterWebApp.Controllers
             ViewData["TotalPages"] = totalPages;
             ViewData["SelectedCategoryId"] = categoryId;
 
-            // Pobierz listę kategorii do dropdowna
             ViewBag.Categories = new SelectList(_context.Categories.ToList(), "Id", "Name");
 
             return View(histories);
         }
+
 
         public IActionResult Statistics()
         {

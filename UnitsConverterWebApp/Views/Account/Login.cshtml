@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="d-flex justify-content-center align-items-start vh-100 pt-5">
+    <form method="post" class="w-100" style="max-width: 400px;">
+        <h2 class="mb-4 text-center">Login</h2>
+        <div class="mb-3">
+            <input name="username" class="form-control" placeholder="Username" required autofocus />
+        </div>
+        <div class="mb-3">
+            <input name="password" type="password" class="form-control" placeholder="Password" required />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger mt-3" role="alert">
+                @ViewBag.Error
+            </div>
+        }
+    </form>
+</div>

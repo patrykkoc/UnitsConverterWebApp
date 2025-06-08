@@ -42,6 +42,9 @@ else
     <p>No units in this category.</p>
 }
 <div>
+  @if (Context.Session.GetString("Role") == "Admin")
+                {
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edytuj</a>
+                }
     <a asp-action="Index" class="btn btn-secondary">Powrót</a>
 </div>
