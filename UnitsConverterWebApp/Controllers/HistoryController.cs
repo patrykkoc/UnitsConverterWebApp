@@ -14,7 +14,7 @@ namespace UnitsConverterWebApp.Controllers
             _context = context;
         }
 
-        public IActionResult Index(int? categoryId, int pageNumber = 1, int pageSize = 10)
+        public IActionResult Index(int? categoryId, int pageNumber = 1, int pageSize = 5)
         {
             string? username = HttpContext.Session.GetString("Username");
             string? role = HttpContext.Session.GetString("Role");

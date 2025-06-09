@@ -26,9 +26,7 @@
         <tr>
             <th>@Html.DisplayNameFor(model => model.Name)</th>
             <th>@Html.DisplayNameFor(model => model.Symbol)</th>
-            <th>@Html.DisplayNameFor(model => model.Category)</th>
-            <th>@Html.DisplayNameFor(model => model.MultiplierToBase)</th>
-            <th>@Html.DisplayNameFor(model => model.OffsetToBase)</th>
+            <th>@Html.DisplayNameFor(model => model.Category)</th> 
             <th>@Html.DisplayNameFor(model => model.IsBaseUnit)</th>
             <th></th>
         </tr>
@@ -47,9 +45,7 @@
                     <a asp-controller="Categories" asp-action="Details" asp-route-id="@item.CategoryId">
                         @item.Category.Name
                     </a>
-                </td>
-                <td>@Html.DisplayFor(modelItem => item.MultiplierToBase)</td>
-                <td>@Html.DisplayFor(modelItem => item.OffsetToBase)</td>
+                </td> 
                 <td>@Html.DisplayFor(modelItem => item.IsBaseUnit)</td>
                 @if (Context.Session.GetString("Role") == "Admin")
                 {

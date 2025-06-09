@@ -38,13 +38,14 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark @(ViewContext.RouteData.Values["controller"]?.ToString() == "Units" ? "active" : "")"
-                               asp-area="" asp-controller="Units" asp-action="Index">Units</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link text-dark @(ViewContext.RouteData.Values["controller"]?.ToString() == "Converter" ? "active" : "")"
                                asp-area="" asp-controller="Converter" asp-action="Index">Converter</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark @(ViewContext.RouteData.Values["controller"]?.ToString() == "Units" ? "active" : "")"
+                               asp-area="" asp-controller="Units" asp-action="Index">Units</a>
+                        </li>
+                      
                         @if (Context.Session.GetString("Username") != null)
                         {
                             <li class="nav-item">
