@@ -21,16 +21,12 @@ namespace UnitsConverterWebApp.Controllers
 
             if (string.IsNullOrEmpty(username))
             {
-                // Brak zalogowanego użytkownika - przekieruj na login lub pokaż pustą listę
+                // Brak zalogowanego użytkownika - przekieruj na login  
                 return RedirectToAction("Login", "Account");
             }
 
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
-            if (user == null)
-            {
-                // Nie znaleziono użytkownika w bazie - możesz obsłużyć to odpowiednio
-                return RedirectToAction("Login", "Account");
-            }
+           
 
             var query = _context.Histories
                 .Include(h => h.FromUnit).ThenInclude(u => u.Category)
