@@ -16,25 +16,29 @@ namespace UnitsConverterWebApp.Controllers
         }
 
         // GET: Converter
-       
 
-        public async Task<IActionResult> Index(int? categoryId)
+
+        public async Task<IActionResult> Index(int categoryId = 1)
         {
             var categories = await _context.Categories.ToListAsync();
-            ViewBag.Categories = new SelectList(categories, "Id", "Name");
-            ViewBag.SelectedCategory = categoryId;
 
-            IQueryable<Unit> unitsQuery = _context.Units.Include(u => u.Category);
-
-            if (categoryId.HasValue)
+            if (!categories.Any(c => c.Id == categoryId))
             {
-                unitsQuery = unitsQuery.Where(u => u.CategoryId == categoryId.Value);
+                // Jeśli podany categoryId jest niepoprawny, ustaw na pierwszy z listy
+                categoryId = categories.FirstOrDefault()?.Id ?? 1;
             }
 
-            var units = await unitsQuery.ToListAsync();
+            ViewBag.Categories = new SelectList(categories, "Id", "Name", categoryId);
+            ViewBag.SelectedCategory = categoryId;
+
+            var units = await _context.Units
+                .Include(u => u.Category)
+                .Where(u => u.CategoryId == categoryId)
+                .ToListAsync();
 
             return View(units);
         }
+
 
         // POST: Converter/Convert
         [HttpPost]
@@ -49,24 +53,24 @@ namespace UnitsConverterWebApp.Controllers
             double valueInBase = fromUnit.ToBase(value);
             double convertedValue = toUnit.FromBase(valueInBase);
 
-            // Pobranie ID użytkownika z sesji
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
 
-            if (user == null)
-                return Unauthorized(); // lub inna obsługa błędu
-
-            _context.Histories.Add(new HistoryEntry
+            // Zapis historii tylko jeśli użytkownik jest zalogowany
+            if (user != null)
             {
-                FromUnitId = fromUnitId,
-                ToUnitId = toUnitId,
-                InputValue = value,
-                OutputValue = convertedValue,
-                Time = DateTime.UtcNow,
-                UserId = user.Id  
-            });
+                _context.Histories.Add(new HistoryEntry
+                {
+                    FromUnitId = fromUnitId,
+                    ToUnitId = toUnitId,
+                    InputValue = value,
+                    OutputValue = convertedValue,
+                    Time = DateTime.UtcNow,
+                    UserId = user.Id
+                });
 
-            _context.SaveChanges();
+                _context.SaveChanges();
+            }
 
             ViewBag.Result = convertedValue;
             ViewBag.FromUnit = fromUnit.Name;
@@ -85,6 +89,7 @@ namespace UnitsConverterWebApp.Controllers
 
             return View("Index", units);
         }
+
 
     }
 }

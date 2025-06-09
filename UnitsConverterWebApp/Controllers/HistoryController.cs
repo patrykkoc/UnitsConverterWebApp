@@ -101,6 +101,20 @@ namespace UnitsConverterWebApp.Controllers
 
             return View();
         }
+        public IActionResult Delete(int id)
+        {
+            var entry = _context.Histories.Find(id);
+            if (entry == null)
+                return NotFound();
 
+            
+            if (HttpContext.Session.GetString("Role") != "Admin")
+                return Forbid();
+
+            _context.Histories.Remove(entry);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

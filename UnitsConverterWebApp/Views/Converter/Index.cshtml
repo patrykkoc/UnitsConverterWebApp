@@ -6,7 +6,7 @@
 
 <form method="get" asp-action="Index">
     <select name="categoryId" onchange="this.form.submit()" class="form-control" style="width:200px; margin-bottom:20px;">
-        <option value="">-- All categories --</option>
+       
         @foreach (var cat in (SelectList)ViewBag.Categories)
         {
             var selectedAttr = ViewBag.SelectedCategory != null && ViewBag.SelectedCategory.ToString() == cat.Value ? "selected" : "";

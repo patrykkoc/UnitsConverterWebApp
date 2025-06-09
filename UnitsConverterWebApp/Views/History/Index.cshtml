@@ -31,7 +31,10 @@
             @if (Context.Session.GetString("Role") == "Admin")
             {
                 <th>Użytkownik</th>
+                <th>Akcje</th>
             }
+            
+
         </tr>
     </thead>
     <tbody>
@@ -46,6 +49,12 @@
                 @if (Context.Session.GetString("Role") == "Admin")
                 {
                     <td>@(item.User != null ? item.User.Username : "Unknown")</td>
+                    <td>
+                        <form asp-action="Delete" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć ten wpis?');">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">Usuń</button>
+                        </form>
+                    </td>
                 }
             </tr>
         }
