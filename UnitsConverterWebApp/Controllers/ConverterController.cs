@@ -24,7 +24,7 @@ namespace UnitsConverterWebApp.Controllers
 
             if (!categories.Any(c => c.Id == categoryId))
             {
-                // Jeśli podany categoryId jest niepoprawny, ustaw na pierwszy z listy
+                 
                 categoryId = categories.FirstOrDefault()?.Id ?? 1;
             }
 
